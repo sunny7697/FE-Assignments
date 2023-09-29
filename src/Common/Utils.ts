@@ -1,4 +1,9 @@
-export function getIndexToInsertContact(sortedList: any, newContact: any) {
+import { IContact } from './module';
+
+export function getIndexToInsertContact(
+  sortedList: IContact[],
+  newContact: IContact
+) {
   let low = 0;
   let high = sortedList?.length - 1;
 
@@ -18,7 +23,7 @@ export function getIndexToInsertContact(sortedList: any, newContact: any) {
   return low;
 }
 
-function compareContacts(contactA: any, contactB: any) {
+function compareContacts(contactA: IContact, contactB: IContact) {
   const firstNameComparison = contactA.first_name.localeCompare(
     contactB.first_name
   );

@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
+import { IContact } from '../../Common/module';
 
 const GET_CONTACTS_LIST = gql`
   query GetContactList(
@@ -33,7 +34,7 @@ const GET_CONTACTS_LIST = gql`
 `;
 
 const useContactsList = (offset?: number, limit?: number, where?: object) => {
-  const [contacts, setContacts] = useState<any>(null);
+  const [contacts, setContacts] = useState<IContact[] | null>(null);
   const [isSkip, setIsSkip] = useState(true);
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const useContactsList = (offset?: number, limit?: number, where?: object) => {
 
   if (contacts) {
     return {
-      data: { list: contacts, total: (contacts || [])?.length },
+      data: { list: contacts, total: contacts?.length },
       loading: false,
       error: null,
     };

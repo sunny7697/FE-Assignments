@@ -98,6 +98,11 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
     setFavContactsList((prevList: IContact[]) =>
       prevList.filter((contact: IContact) => contact.id !== id)
     );
+    setToast({
+      message: 'Contact deleted successfully',
+      open: true,
+      type: 'success',
+    });
   };
 
   const deleteRegContact = async (id: number) => {

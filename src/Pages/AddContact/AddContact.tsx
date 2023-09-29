@@ -88,7 +88,7 @@ const AddContact: React.FC<IAddContact> = ({
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [formErrors, setFormError] = useState(formErrorsInitialState);
-  const [phones, setPhones] = useState<any>([{ number: '' }]);
+  const [phones, setPhones] = useState<{ number: string }[]>([{ number: '' }]);
   const [toast, setToast] = useState(TOAST_INITIAL_STATE);
 
   const onAddClickHandler = () => {
@@ -198,7 +198,7 @@ const AddContact: React.FC<IAddContact> = ({
 
     setFirstName('');
     setLastName('');
-    setPhones([{}]);
+    setPhones([{ number: '' }]);
   };
 
   const onChangeHandler = (e: any, idx: number) => {

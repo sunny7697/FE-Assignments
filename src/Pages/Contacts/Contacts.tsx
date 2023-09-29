@@ -23,7 +23,7 @@ const StyledContacts = styled.section`
 
     &-btns {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
     }
   }
@@ -48,10 +48,6 @@ const Contacts: React.FC<IContactsProps> = ({
     <StyledContacts>
       <div className='contacts-cta'>
         <div className='contacts-btns'>
-          <Button type='primary' size='small'>
-            Select Multiple
-          </Button>
-
           <div className='contacts-cta-icons'>
             <Link to='/add'>
               <AiOutlinePlus
