@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { AiOutlineSearch, AiOutlinePlus } from 'react-icons/ai';
-import { Button, SearchBox } from '../../Components';
+import { Button } from '../../Components';
 import ContactsGrid from './components/ContactsGrid';
+import { IContact } from '../../Common/module';
 
 const StyledContacts = styled.section`
   margin: 1rem;
@@ -28,7 +29,15 @@ const StyledContacts = styled.section`
   }
 `;
 
-const Contacts: React.FC = () => {
+interface IContactsProps {
+  contactsList: IContact[];
+  setContactsList: Function;
+}
+
+const Contacts: React.FC<IContactsProps> = ({
+  contactsList,
+  setContactsList,
+}) => {
   const [showSearchBar, setShowSearchBar] = useState(false);
 
   const onClickSearchIcon = () => {
@@ -62,14 +71,13 @@ const Contacts: React.FC = () => {
             </Button>
           </div>
         </div>
-        {showSearchBar && (
-          <div className='contacts-searchbox'>
-            <SearchBox label='Search Contact' />
-          </div>
-        )}
       </div>
       <div>
-        <ContactsGrid />
+        <ContactsGrid
+          contactsList={contactsList}
+          setContactsList={setContactsList}
+          showSearchBar={showSearchBar}
+        />
       </div>
     </StyledContacts>
   );

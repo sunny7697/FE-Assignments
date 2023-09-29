@@ -11,7 +11,7 @@ const useDebounce = (query: string, delay: number = 1000) => {
     };
   }, [query, delay]);
 
-  return debouncedQuery;
+  return debouncedQuery.toLowerCase();
 };
 
 export default useDebounce;

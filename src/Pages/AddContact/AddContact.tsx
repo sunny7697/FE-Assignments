@@ -5,6 +5,8 @@ import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 import { useAddContact } from '../../Custom-Hooks/graphql-mutation/useAddContact';
 import { REGEX, inputErrMsg } from '../../Common/Constants';
+import { IContact } from '../../Common/module';
+import { getIndexToInsertContact } from '../../Common/Utils';
 
 const FormStyles = css`
   margin: 4rem;
@@ -66,8 +68,16 @@ const formErrorsInitialState = {
   submit: '',
 };
 
-const AddContact: React.FC = () => {
-  const { executeAddContact, loading } = useAddContact();
+interface IAddContact {
+  contactsList: IContact[];
+  setContactsList: Function;
+}
+
+const AddContact: React.FC<IAddContact> = ({
+  contactsList,
+  setContactsList,
+}) => {
+  const { executeAddContact, loading, data } = useAddContact();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [formErrors, setFormError] = useState(formErrorsInitialState);
@@ -133,8 +143,19 @@ const AddContact: React.FC = () => {
     const res = await executeAddContact(firstName, lastName, phonesToAdd);
 
     if (res.error) {
-      return setFormError((prev: any) => ({ ...prev, submit: true }));
+      return setFormError((prev: any) => ({
+        ...prev,
+        submit: 'Something Went Wrong. Please try again',
+      }));
     }
+
+    const newContact = res.data?.data.insert_contact.returning[0];
+    const indexToInsert = getIndexToInsertContact(contactsList, newContact);
+    setContactsList((prevList: any) => [
+      ...prevList.slice(0, indexToInsert),
+      newContact,
+      ...prevList.slice(indexToInsert),
+    ]);
 
     setFirstName('');
     setLastName('');

@@ -4,20 +4,20 @@ import useClickOutside from '../../Custom-Hooks/useClickOutside';
 import useDebounce from '../../Custom-Hooks/useDebounce';
 import styled from '@emotion/styled';
 import Input from '../Input';
-
-interface ISearchData {
-  value: string;
-  id: number;
-}
+import { IContact } from '../../Common/module';
 
 interface ISearchBox {
-  data?: ISearchData[];
+  data?: IContact[];
   label?: string;
+  filteredData?: IContact[];
+  setFilteredData?: Function;
 }
 
 const StyledSearchBox = styled.div<ISearchBox>`
   display: flex;
   flex-direction: column;
+  position: relative;
+  margin-bottom: 2rem;
   input {
     padding: 8px;
     font-size: 16px;
@@ -29,6 +29,11 @@ const StyledSearchBox = styled.div<ISearchBox>`
     margin: 0.4rem 0;
     max-height: 20rem;
     overflow-y: auto;
+    position: absolute;
+    top: 4.3rem;
+    background-color: white;
+    width: 100%;
+    border: 1px solid var(--grey);
   }
 
   ul.search-results li {
@@ -41,9 +46,14 @@ const StyledSearchBox = styled.div<ISearchBox>`
   }
 `;
 
-const SearchBox: React.FC<ISearchBox> = ({ data = [], label }) => {
+const SearchBox: React.FC<ISearchBox> = ({
+  data = [],
+  filteredData = [],
+  setFilteredData = () => {},
+  label,
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredData, setFilteredData] = useState<ISearchData[]>(data);
+  // const [filteredData, setFilteredData] = useState<IContact[]>(data);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(-1);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const searchResultsRef = useRef<HTMLUListElement>(null);
@@ -52,23 +62,31 @@ const SearchBox: React.FC<ISearchBox> = ({ data = [], label }) => {
   const debouncedQuery = useDebounce(searchTerm);
 
   const debouncedResults = (query: string) => {
-    const filteredOptions = data?.filter((item) =>
-      item?.value?.toLowerCase().includes(query?.toLowerCase())
-    );
+    const filteredOptions = data?.filter((item) => {
+      const fullName = `${item.first_name} ${item.last_name}`;
+      const phoneNumberMatches = item.phones.some((phone) =>
+        phone.number.includes(query)
+      );
+      return (
+        fullName.toLowerCase().includes(query.toLowerCase()) ||
+        phoneNumberMatches
+      );
+    });
     setFilteredData(filteredOptions || []);
   };
 
   useEffect(() => {
+    setFilteredData(data);
     debouncedResults(debouncedQuery);
-  }, [debouncedQuery]);
+  }, [debouncedQuery, data]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleItemClick = (item: string) => {
+  const handleItemClick = (item: IContact) => {
     setIsFocused(false);
-    setSearchTerm(item);
+    setSearchTerm(item.first_name); // You can customize how you want to display the selected item
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -82,9 +100,11 @@ const SearchBox: React.FC<ISearchBox> = ({ data = [], label }) => {
       setSelectedItemIndex((prevIndex) =>
         prevIndex < filteredData.length - 1 ? prevIndex + 1 : 0
       );
-    } else if (event.key === 'Enter' && selectedItemIndex !== -1) {
+    } else if (event.key === 'Enter') {
       event.preventDefault();
-      setSearchTerm(filteredData[selectedItemIndex].value);
+      if (selectedItemIndex !== -1) {
+        setSearchTerm(filteredData[selectedItemIndex].first_name);
+      }
       setIsFocused(false);
       inputRef.current?.blur();
     }
@@ -111,6 +131,19 @@ const SearchBox: React.FC<ISearchBox> = ({ data = [], label }) => {
     }
   }, [selectedItemIndex]);
 
+  const showNumber = (item: IContact) => {
+    if (
+      item.first_name.toLowerCase().includes(debouncedQuery) ||
+      item.last_name.toLowerCase().includes(debouncedQuery)
+    ) {
+      return item.phones[0];
+    }
+    const number = item.phones.find((phone) =>
+      phone.number.includes(debouncedQuery)
+    );
+    return number;
+  };
+
   return (
     <StyledSearchBox ref={containerRef}>
       <Input
@@ -127,10 +160,11 @@ const SearchBox: React.FC<ISearchBox> = ({ data = [], label }) => {
           {filteredData.map((item, index) => (
             <li
               key={item.id}
-              onClick={() => handleItemClick(item.value)}
+              onClick={() => handleItemClick(item)}
               className={index === selectedItemIndex ? 'selected' : ''}
             >
-              {item.value}
+              <div>{`${item.first_name} ${item.last_name}`}</div>
+              <div>{showNumber(item)?.number}</div>
             </li>
           ))}
         </ul>
