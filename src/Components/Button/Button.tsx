@@ -1,54 +1,82 @@
 import React, { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
+import Loader from '../Loader';
 
 interface ButtonProps {
-  primary?: boolean;
+  type?: 'primary' | 'link';
+  htmlType?: 'button' | 'submit';
   size?: 'small' | 'medium' | 'large';
   onClick?: () => void;
   children?: ReactNode;
+  classname?: string;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
-const StyledButton = styled.button<ButtonProps>`
-  background-color: ${(props) => (props.primary ? '#00b9f5' : 'transparent')};
-  color: ${(props) => (props.primary ? '#fff' : '#00b9f5')};
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
+const StyledButton = styled.div<ButtonProps>`
+  display: flex;
+  width: fit-content;
+  button {
+    background-color: var(--blue3);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
 
-  ${(props) =>
-    props.size === 'small' &&
-    css`
-      padding: 6px 12px;
-      font-size: 12px;
-    `}
-  ${(props) =>
-    props.size === 'large' &&
-    css`
-      padding: 14px 28px;
-      font-size: 20px;
-    `}
-  ${(props) =>
-    (!props.size || props.size === 'medium') &&
-    css`
-      padding: 10px 20px;
-    `}
+  .small {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .medium {
+    padding: 10px 20px;
+  }
+  .large {
+    padding: 14px 28px;
+    font-size: 20px;
+  }
 
-  &:hover {
-    background-color: ${(props) => (props.primary ? '#0056b3' : '#e0e0e0')};
+  .link {
+    padding: 1.5rem 0;
+    background-color: transparent;
+    color: var(--grey);
+  }
+
+  &button:hover {
+    background-color: ${(props) => (props.type ? '#0056b3' : '#e0e0e0')};
+  }
+
+  .disabled {
+    cursor: not-allowed;
   }
 `;
 
 const Button: React.FC<ButtonProps> = ({
-  primary,
-  onClick,
+  onClick = () => {},
   children,
-  size,
+  size = 'medium',
+  type,
+  htmlType = 'button',
+  classname,
+  loading = false,
+  disabled = false,
 }) => {
+  const classnames = `${type} ${size} ${classname} ${
+    disabled ? 'disabled' : ''
+  }`;
+
+  const onClickHandler = () => {
+    if (disabled || loading) return;
+    onClick();
+  };
+
   return (
-    <StyledButton primary={primary} onClick={onClick} size={size}>
-      {children}
+    <StyledButton onClick={onClickHandler} size={size} className={classnames}>
+      <button className={classnames} type={htmlType}>
+        {!loading && children}
+        {loading && <Loader size='small' />}
+      </button>
     </StyledButton>
   );
 };

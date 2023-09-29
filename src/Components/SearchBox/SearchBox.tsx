@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import useClickOutside from '../../Custom-Hooks/useClickOutside';
 import useDebounce from '../../Custom-Hooks/useDebounce';
 import styled from '@emotion/styled';
+import Input from '../Input';
 
 interface ISearchData {
   value: string;
@@ -11,6 +12,7 @@ interface ISearchData {
 
 interface ISearchBox {
   data?: ISearchData[];
+  label?: string;
 }
 
 const StyledSearchBox = styled.div<ISearchBox>`
@@ -39,7 +41,7 @@ const StyledSearchBox = styled.div<ISearchBox>`
   }
 `;
 
-const SearchBox: React.FC<ISearchBox> = ({ data = [] }) => {
+const SearchBox: React.FC<ISearchBox> = ({ data = [], label }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredData, setFilteredData] = useState<ISearchData[]>(data);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(-1);
@@ -111,15 +113,16 @@ const SearchBox: React.FC<ISearchBox> = ({ data = [] }) => {
 
   return (
     <StyledSearchBox ref={containerRef}>
-      <input
+      <Input
         type='text'
+        label={label}
         value={searchTerm}
         ref={inputRef}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onFocus={handleInputFocus}
       />
-      {isFocused && (
+      {isFocused && filteredData.length > 0 && (
         <ul className='search-results' ref={searchResultsRef}>
           {filteredData.map((item, index) => (
             <li

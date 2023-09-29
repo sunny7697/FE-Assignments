@@ -1,15 +1,20 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Header } from './Components';
+import Contacts from './Pages/Contacts';
+import AddContact from './Pages/AddContact';
+
 import './App.css';
-import { Button, Input, Loader, SearchBox } from './Components';
 
 function App() {
   return (
-    <div>
-      <div>App</div>
-      <div>
-        <SearchBox />
-      </div>
-    </div>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path='/' element={<Contacts />} />
+        <Route path='/add' element={<AddContact />} />
+      </Routes>
+    </Router>
   );
 }
 
