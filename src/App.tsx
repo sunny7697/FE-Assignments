@@ -9,17 +9,25 @@ import useContactsList from './Custom-Hooks/graphql-query/useContactsList';
 import './App.css';
 
 function App() {
-  const [contactsList, setContactsList] = useState<any>([]);
+  const [contactsList, setContactsList] = useState<any>();
   const contactListPayload = useContactsList();
+
+  useEffect(() => {
+    if (Array.isArray(contactsList)) {
+      localStorage.setItem('regularContacts', JSON.stringify(contactsList));
+    }
+  }, [contactsList]);
+
+  console.log('concon: ', contactsList);
 
   useEffect(() => {
     if (
       !contactListPayload.loading &&
       !contactListPayload.error &&
       contactListPayload.data &&
-      contactsList.length === 0
+      (!contactsList || contactsList?.length === 0)
     ) {
-      setContactsList(contactListPayload.data?.list);
+      setContactsList(contactListPayload?.data?.list);
     }
   }, [contactListPayload, contactsList]);
 

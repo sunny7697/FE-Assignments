@@ -21,7 +21,7 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
   showSearchBar,
 }) => {
   const [regularContactsList, setRegularContactsList] = useState([]);
-  const [favContactsList, setFavContactsList] = useState<any>([]);
+  const [favContactsList, setFavContactsList] = useState<any>(null);
   const [displayedContacts, setDisplayedContacts] = useState<any>([]);
   const [pageNum, setPageNum] = useState(1);
   const { executeDeleteContact, loading } = useDeleteContact();
@@ -33,6 +33,19 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
   useEffect(() => {
     setRegularContactsList(contactsList);
   }, [contactsList]);
+
+  useEffect(() => {
+    const items = localStorage.getItem('favContacts');
+    if (items) {
+      setFavContactsList(JSON.parse(items));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (Array.isArray(favContactsList)) {
+      localStorage.setItem('favContacts', JSON.stringify(favContactsList));
+    }
+  }, [favContactsList]);
 
   const updateDisplayedContacts = (pageNum: number) => {
     const contactsToDisplay: any[] = [];
@@ -51,7 +64,7 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
 
   const markContactFav = (id: number) => {
     setFavContactsList((prev: any) => [
-      ...prev,
+      ...(prev || []),
       displayedContacts?.find((contact: IContact) => contact.id === id),
     ]);
     const updatedContactList = contactsList.filter(
@@ -94,6 +107,8 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
     );
   };
 
+  if (!contactsList) return <div>Something went wrong</div>;
+
   const renderContacts = () => {
     return (
       <>
@@ -107,7 +122,7 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
             />
           </div>
         )}
-        {favContactsList?.length !== 0 && (
+        {favContactsList && favContactsList?.length !== 0 && (
           <div style={{ margin: '2rem 0 3rem 0' }}>
             <h3>Favorite Contacts ({favContactsList?.length})</h3>
             <ul>
@@ -145,7 +160,7 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
         <Pagination
           currentPage={pageNum}
           setCurrentPage={setPageNum}
-          totalPages={Math.ceil(regularContactsList.length / 10)}
+          totalPages={Math.ceil((regularContactsList?.length || 0) / 10)}
         />
       </>
     );

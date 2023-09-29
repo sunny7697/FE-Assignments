@@ -4,7 +4,13 @@ import { Button, Input } from '../../Components';
 import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 import { useAddContact } from '../../Custom-Hooks/graphql-mutation/useAddContact';
-import { REGEX, inputErrMsg } from '../../Common/Constants';
+import {
+  DEFAULT_ERROR,
+  DUPLICATE_PHONE_CLIENT_ERROR,
+  DUPLICATE_PHONE_SERVER_ERROR,
+  REGEX,
+  inputErrMsg,
+} from '../../Common/Constants';
 import { IContact } from '../../Common/module';
 import { getIndexToInsertContact } from '../../Common/Utils';
 
@@ -145,7 +151,10 @@ const AddContact: React.FC<IAddContact> = ({
     if (res.error) {
       return setFormError((prev: any) => ({
         ...prev,
-        submit: 'Something Went Wrong. Please try again',
+        submit:
+          res.error?.message === DUPLICATE_PHONE_SERVER_ERROR
+            ? DUPLICATE_PHONE_CLIENT_ERROR
+            : DEFAULT_ERROR,
       }));
     }
 

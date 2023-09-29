@@ -1,6 +1,6 @@
 export function getIndexToInsertContact(sortedList: any, newContact: any) {
   let low = 0;
-  let high = sortedList.length - 1;
+  let high = sortedList?.length - 1;
 
   while (low <= high) {
     const mid = Math.floor((low + high) / 2);
