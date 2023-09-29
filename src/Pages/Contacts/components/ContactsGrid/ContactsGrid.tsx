@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import useContactsList from '../../../../Custom-Hooks/graphql-query/useContactsList';
 import { useDeleteContact } from '../../../../Custom-Hooks/graphql-mutation/useDeleteContact';
 import { getIndexToInsertContact } from '../../../../Common/Utils';
 import ContactsGridItem from '../ContactsGridItem';
 import { SearchBox } from '../../../../Components';
 import { IContact } from '../../../../Common/module';
+import Pagination from '../../../../Components/Pagination';
 
 const StyledContactsGrid = styled.div``;
 
@@ -142,6 +142,11 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
         ) : (
           <div>No Contact Found</div>
         )}
+        <Pagination
+          currentPage={pageNum}
+          setCurrentPage={setPageNum}
+          totalPages={Math.ceil(regularContactsList.length / 10)}
+        />
       </>
     );
   };
