@@ -3,9 +3,10 @@ import styled from '@emotion/styled';
 import { useDeleteContact } from '../../../../Custom-Hooks/graphql-mutation/useDeleteContact';
 import { getIndexToInsertContact } from '../../../../Common/Utils';
 import ContactsGridItem from '../ContactsGridItem';
-import { SearchBox } from '../../../../Components';
+import { SearchBox, Toast } from '../../../../Components';
 import { IContact } from '../../../../Common/module';
 import Pagination from '../../../../Components/Pagination';
+import { TOAST_INITIAL_STATE } from '../../../../Common/Constants';
 
 const StyledContactsGrid = styled.div``;
 
@@ -25,6 +26,7 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
   const [displayedContacts, setDisplayedContacts] = useState<any>([]);
   const [pageNum, setPageNum] = useState(1);
   const { executeDeleteContact, loading } = useDeleteContact();
+  const [toast, setToast] = useState(TOAST_INITIAL_STATE);
 
   useEffect(() => {
     updateDisplayedContacts(pageNum);
@@ -105,6 +107,12 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
     setContactsList((prevList: IContact[]) =>
       prevList.filter((contact: IContact) => contact.id !== id)
     );
+
+    setToast({
+      message: 'Contact deleted successfully',
+      open: true,
+      type: 'success',
+    });
   };
 
   if (!contactsList) return <div>Something went wrong</div>;
@@ -162,6 +170,12 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
           setCurrentPage={setPageNum}
           totalPages={Math.ceil((regularContactsList?.length || 0) / 10)}
         />
+        {toast.open && (
+          <Toast
+            message={toast.message}
+            onClose={() => setToast(TOAST_INITIAL_STATE)}
+          />
+        )}
       </>
     );
   };

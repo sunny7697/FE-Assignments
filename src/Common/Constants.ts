@@ -10,3 +10,5 @@ export const DUPLICATE_PHONE_SERVER_ERROR =
 export const DUPLICATE_PHONE_CLIENT_ERROR = 'Phone number is already added.';
 
 export const DEFAULT_ERROR = 'Something went wrong. Please try again!';
+
+export const TOAST_INITIAL_STATE = { message: '', open: false, type: '' };

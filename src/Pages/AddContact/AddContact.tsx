@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from 'react';
-import { Button, Input } from '../../Components';
+import { Button, Input, Toast } from '../../Components';
 import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 import { useAddContact } from '../../Custom-Hooks/graphql-mutation/useAddContact';
@@ -9,6 +9,7 @@ import {
   DUPLICATE_PHONE_CLIENT_ERROR,
   DUPLICATE_PHONE_SERVER_ERROR,
   REGEX,
+  TOAST_INITIAL_STATE,
   inputErrMsg,
 } from '../../Common/Constants';
 import { IContact } from '../../Common/module';
@@ -88,6 +89,7 @@ const AddContact: React.FC<IAddContact> = ({
   const [lastName, setLastName] = useState('');
   const [formErrors, setFormError] = useState(formErrorsInitialState);
   const [phones, setPhones] = useState<any>([{ number: '' }]);
+  const [toast, setToast] = useState(TOAST_INITIAL_STATE);
 
   const onAddClickHandler = () => {
     setPhones((prev: any) => [...prev, { number: '' }]);
@@ -136,6 +138,28 @@ const AddContact: React.FC<IAddContact> = ({
       isFormValid = false;
     }
 
+    const favContacts = localStorage.getItem('favContacts');
+    let parsedFavContacts = [];
+    if (favContacts) parsedFavContacts = JSON.parse(favContacts);
+
+    if (
+      contactsList.some(
+        (contact) =>
+          contact.first_name.toLowerCase() === firstName.toLowerCase() &&
+          contact.last_name.toLowerCase() === lastName.toLowerCase()
+      ) ||
+      parsedFavContacts.some(
+        (contact: any) =>
+          contact.first_name.toLowerCase() === firstName.toLowerCase() &&
+          contact.last_name.toLowerCase() === lastName.toLowerCase()
+      )
+    ) {
+      setFormError((prev: any) => ({
+        ...prev,
+        submit: 'This contact name already present',
+      }));
+      isFormValid = false;
+    }
     return isFormValid;
   };
 
@@ -165,6 +189,12 @@ const AddContact: React.FC<IAddContact> = ({
       newContact,
       ...prevList.slice(indexToInsert),
     ]);
+
+    setToast({
+      message: 'Contact added successfully',
+      open: true,
+      type: 'success',
+    });
 
     setFirstName('');
     setLastName('');
@@ -271,6 +301,12 @@ const AddContact: React.FC<IAddContact> = ({
           </Button>
         </div>
       </form>
+      {toast.open && (
+        <Toast
+          message={toast.message}
+          onClose={() => setToast(TOAST_INITIAL_STATE)}
+        />
+      )}
     </div>
   );
 };

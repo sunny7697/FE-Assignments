@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { Header } from './Components';
+import { Header, Modal } from './Components';
 import Contacts from './Pages/Contacts';
 import AddContact from './Pages/AddContact';
 import useContactsList from './Custom-Hooks/graphql-query/useContactsList';
@@ -17,8 +17,6 @@ function App() {
       localStorage.setItem('regularContacts', JSON.stringify(contactsList));
     }
   }, [contactsList]);
-
-  console.log('concon: ', contactsList);
 
   useEffect(() => {
     if (

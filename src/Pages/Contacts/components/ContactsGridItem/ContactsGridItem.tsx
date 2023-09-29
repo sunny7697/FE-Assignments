@@ -4,6 +4,7 @@ import { AiOutlineStar, AiFillStar } from 'react-icons/ai';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { BsChevronRight } from 'react-icons/bs';
 import { FaUserCircle } from 'react-icons/fa';
+import { Button, Modal } from '../../../../Components';
 
 const StyledContactList = styled.li`
   border-bottom: 1px solid var(--grey);
@@ -80,6 +81,7 @@ const ContactsGridItem: React.FC<any> = ({
   favorite = false,
 }) => {
   const [openItems, setOpenItem] = useState<any>({});
+  const [showModal, setShowModal] = useState(false);
   const onClickCollapseBtn = (index: number) => {
     let updatedOpenItem = { ...openItems };
     if (openItems[index]) {
@@ -116,7 +118,7 @@ const ContactsGridItem: React.FC<any> = ({
             <span
               onClick={(e) => {
                 e.stopPropagation();
-                onDeleteClick(contact.id);
+                setShowModal(true);
               }}
             >
               <RiDeleteBin6Line />
@@ -132,6 +134,17 @@ const ContactsGridItem: React.FC<any> = ({
           ))}
         </ul>
       </div>
+      {showModal && (
+        <Modal isOpen>
+          <div className='modal-delete'>
+            <h3>Do you want to delete this contact?</h3>
+            <div className='modal-btns'>
+              <Button onClick={() => onDeleteClick(contact.id)}>Yes</Button>
+              <Button onClick={() => setShowModal(false)}>No</Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </StyledContactList>
   );
 };

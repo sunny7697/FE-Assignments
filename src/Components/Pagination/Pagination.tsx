@@ -111,6 +111,8 @@ const Pagination = ({
     handlePageChange(totalPages);
   };
 
+  if (totalPages === 0) return <></>;
+
   return (
     <StyledPagination>
       <div className='pagination-container'>
