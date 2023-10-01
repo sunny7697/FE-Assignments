@@ -93,8 +93,8 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
   };
 
   const deleteFavContact = async (id: number) => {
-    const res = await executeDeleteContact(id);
-    if (!res.data) return;
+    // const res = await executeDeleteContact(id);
+    // if (!res.data) return;
     setFavContactsList((prevList: IContact[]) =>
       prevList.filter((contact: IContact) => contact.id !== id)
     );
@@ -152,9 +152,10 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
             </ul>
           </div>
         )}
-        {contactsList?.length !== 0 ? (
-          <div>
-            <h3>Regular Contacts ({regularContactsList?.length})</h3>
+
+        <div>
+          <h3>Regular Contacts ({regularContactsList?.length})</h3>
+          {contactsList?.length !== 0 ? (
             <ul>
               {displayedContacts.map((contact: any, index: number) => (
                 <ContactsGridItem
@@ -166,10 +167,11 @@ const ContactsGrid: React.FC<IcontactsGrid> = ({
                 />
               ))}
             </ul>
-          </div>
-        ) : (
-          <div>No Contact Found</div>
-        )}
+          ) : (
+            <div>No Contact Found</div>
+          )}
+        </div>
+
         <Pagination
           currentPage={pageNum}
           setCurrentPage={setPageNum}

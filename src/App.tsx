@@ -27,7 +27,7 @@ function App() {
     ) {
       setContactsList(contactListPayload?.data?.list);
     }
-  }, [contactListPayload, contactsList]);
+  }, [contactListPayload?.data?.list]);
 
   return (
     <Router>
